@@ -76,7 +76,7 @@ const R=[
  {k:'mitico',n:'MÍTICO',c:'#ff263c',p:1,d:55,h:270,names:['RL','FEFA']},
  {k:'secreto',n:'SECRETO',c:'rgb',p:.5,d:90,h:360,names:['POLO']}
 ];
-let current=R[0], currentName='Nicolas', rolling=false, coins=100;
+let current=null, currentName='???', rolling=false, coins=100, hasCharacter=false;
 const menu=document.getElementById('menu'), panel=document.getElementById('rngPanel');
 const rn=document.getElementById('rollingName'), rr=document.getElementById('rollingRarity'), bar=document.getElementById('bar');
 
@@ -123,35 +123,59 @@ function setDisplay(r,name,rollingView=false){
  else {n.style.color=r.c;rr.style.color=r.c;}
 }
 function startRoll(){
- if(rolling || score<100)return;
- rolling=true; score-=100; document.getElementById('score').textContent=score; initAudio();
+ if(rolling)return;
+ // First roll is free; every roll after obtaining a character costs 100 points.
+ if(hasCharacter && coins<100){
+   document.getElementById('resultText').textContent='Você precisa de 100 pontos para rolar novamente!';
+   return;
+ }
+ if(hasCharacter){
+   coins-=100;
+   document.getElementById('menuScore').textContent=coins;
+ }
+ rolling=true;
+ initAudio();
+ panel.style.display='flex';
  const names=R.flatMap(r=>r.names), finalR=pick(), finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
- let step=0,total=34;
+ let step=0,total=38;
  function tick(){
-  if(step<total){
-   let name;
-   do{name=names[Math.floor(Math.random()*names.length)]}while(name===rn.textContent);
-   const rrNow=R.find(r=>r.names.includes(name))||R[0];
-   rn.textContent=name;
-   rn.style.color=rrNow.c==='rgb'?`hsl(${performance.now()/3%360} 100% 60%)`:rrNow.c;
-   rr.textContent=rrNow.n; rr.style.color=rn.style.color;
-   bar.style.width=((step+1)/total*100)+'%';
-   rollSound(); step++;
-   const p=step/total, delay=28+Math.pow(p,3)*430;
-   setTimeout(tick,delay); return;
-  }
-  rn.textContent=finalName;
-  rn.style.color=finalR.c==='rgb'?`hsl(${performance.now()/2%360} 100% 60%)`:finalR.c;
-  rr.textContent=finalR.n; rr.style.color=rn.style.color; bar.style.width='100%';
-  showResult(finalR,finalName); special(finalR); rolling=false;
+   if(step<total){
+     let name;
+     do{name=names[Math.floor(Math.random()*names.length)]}while(name===rn.textContent && names.length>1);
+     const rrNow=R.find(r=>r.names.includes(name))||R[0];
+     rn.textContent=name;
+     rn.style.color=rrNow.c==='rgb'?`hsl(${performance.now()/3%360} 100% 60%)`:rrNow.c;
+     rr.textContent=rrNow.n; rr.style.color=rn.style.color;
+     bar.style.width=((step+1)/total*100)+'%';
+     rollSound();
+     step++;
+     const p=step/total, delay=25+Math.pow(p,3)*480;
+     setTimeout(tick,delay);
+     return;
+   }
+   rn.textContent=finalName;
+   rn.style.color=finalR.c==='rgb'?`hsl(${performance.now()/2%360} 100% 60%)`:finalR.c;
+   rr.textContent=finalR.n; rr.style.color=rn.style.color; bar.style.width='100%';
+   showResult(finalR,finalName); special(finalR);
+   rolling=false; panel.style.display='none';
+   document.getElementById('resultText').textContent=finalName+' • '+finalR.n;
  }
  tick();
 }
 document.getElementById('menuRoll').onclick=startRoll;
+document.getElementById('again').onclick=startRoll;
 
 document.getElementById('playerName').addEventListener('input',e=>{document.getElementById('hudName').textContent=e.target.value||'Player1'});
 
-document.getElementById('playBtn').onclick=()=>{menu.style.display='none';document.getElementById('game').style.display='block';document.getElementById('back').style.display='block';resetGame()};
+document.getElementById('playBtn').onclick=()=>{
+ if(!hasCharacter){
+   document.getElementById('resultText').textContent='Faça a primeira rolagem para ganhar um apelido!';
+   document.getElementById('resultName').textContent='???';
+   document.getElementById('resultName').animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:350});
+   return;
+ }
+ menu.style.display='none';document.getElementById('game').style.display='block';document.getElementById('back').style.display='block';resetGame();
+};
 document.getElementById('back').onclick=()=>{document.getElementById('game').style.display='none';document.getElementById('back').style.display='none';document.getElementById('gameOver').style.display='none';menu.style.display='flex';document.getElementById('menuScore').textContent=coins};
 document.getElementById('retryBtn').onclick=()=>{document.getElementById('gameOver').style.display='none';document.getElementById('mobileFire').style.display=deviceMode==='mobile'?'block':'none';resetGame()};
 document.getElementById('overMenuBtn').onclick=()=>document.getElementById('back').click();
