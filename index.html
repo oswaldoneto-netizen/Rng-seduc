@@ -2,110 +2,165 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>RNG Pedras</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#07101d;color:#fff;overflow:hidden}
-canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
-#ui{position:fixed;inset:0;pointer-events:none}
-.top{display:flex;justify-content:space-between;gap:10px;padding:14px;flex-wrap:wrap}
-.card{background:#0d1828dd;border:1px solid #2a405b;border-radius:14px;padding:10px 14px;box-shadow:0 6px 25px #0008}
-.stats{display:flex;gap:10px;flex-wrap:wrap}.stat b{display:block;font-size:18px}.small{font-size:12px;color:#a9b8c9}
-#rollBox{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;min-width:320px}
-#name{font-size:44px;font-weight:900;text-shadow:0 0 22px currentColor;letter-spacing:1px}
-#rarity{font-size:20px;font-weight:bold;margin:5px}
-button{pointer-events:auto;border:0;border-radius:12px;padding:13px 22px;font-weight:900;cursor:pointer;background:#fff;color:#07101d}
-button:hover{transform:scale(1.04)}#roll{margin-top:12px;font-size:17px}
-#help{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);text-align:center;color:#b9c6d5}
-.hp{height:6px;background:#1b2635;border-radius:10px;overflow:hidden;margin-top:5px}.hp>i{display:block;height:100%;background:#58e36e}
-#flash{position:fixed;inset:0;pointer-events:none;opacity:0;mix-blend-mode:screen}
-.shake{animation:shake .35s}@keyframes shake{25%{transform:translate(8px,-5px)}50%{transform:translate(-8px,5px)}75%{transform:translate(5px,3px)}}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif;background:#050914;color:white}
+body{touch-action:none}
+button{font:inherit}
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#menu{background:radial-gradient(circle at 50% 35%,#182c49 0,#091321 42%,#03060c 100%)}
+.menuBox{width:min(92vw,650px);padding:30px 22px;text-align:center;border:1px solid #304967;border-radius:24px;background:#08111fe8;box-shadow:0 20px 80px #000b}
+.logo{font-size:clamp(42px,12vw,82px);font-weight:1000;letter-spacing:4px;text-shadow:0 0 30px #42a5ff}
+.sub{color:#9db0c7;margin:8px 0 28px}
+.buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{border:0;border-radius:14px;padding:15px 26px;font-weight:1000;font-size:18px;cursor:pointer;box-shadow:0 8px 25px #0008}
+.btn.roll{background:#fff;color:#08111f}.btn.play{background:#38df77;color:#04130a}.btn:active{transform:scale(.97)}
+#rngPanel{display:none;position:fixed;inset:0;background:radial-gradient(circle,#172944,#050912 70%);align-items:center;justify-content:center;z-index:20}
+.rngCard{width:min(92vw,700px);text-align:center;padding:28px;border-radius:24px;background:#091321eF;border:1px solid #365170;box-shadow:0 20px 90px #000}
+.rngTitle{font-size:15px;letter-spacing:4px;color:#8fa5bd}.rollingName{height:100px;display:flex;align-items:center;justify-content:center;font-size:clamp(42px,11vw,78px);font-weight:1000;text-shadow:0 0 28px currentColor}
+.rollingRarity{font-size:21px;font-weight:900;min-height:30px}.bar{height:7px;background:#172437;border-radius:10px;overflow:hidden;margin:24px 0}.bar i{display:block;height:100%;width:0;background:#fff}
+.result{min-height:52px}.result small{color:#91a4b8}.result b{font-size:30px}
+.hidden{display:none!important}
+#game{display:none;position:fixed;inset:0}
+canvas{width:100%;height:100%;display:block}
+.hud{position:fixed;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:8px;z-index:5;pointer-events:none}
+.hudBox{background:#07101ddd;border:1px solid #2a415b;border-radius:12px;padding:9px 12px;box-shadow:0 5px 20px #0007}
+.hudBox b{font-size:18px}.tiny{font-size:10px;color:#91a5ba;text-transform:uppercase;display:block}
+#power{position:fixed;left:50%;bottom:15px;transform:translateX(-50%);background:#07101de8;border:1px solid #2a415b;border-radius:14px;padding:9px 14px;text-align:center;z-index:5;pointer-events:none}
+#powerName{font-weight:1000}.hint{font-size:11px;color:#9fb0c2}
+#back{position:fixed;top:72px;right:10px;z-index:8;display:none;border:0;border-radius:10px;padding:9px 12px;font-weight:900}
+.flash{position:fixed;inset:0;pointer-events:none;z-index:10;opacity:0}
 </style>
 </head>
 <body>
-<canvas id="game"></canvas>
-<div id="flash"></div>
-<div id="ui">
- <div class="top">
-  <div class="card"><div class="small">APELIDO ATUAL</div><div id="current">Nicolas — COMUM</div></div>
-  <div class="stats">
-   <div class="card stat"><span class="small">PONTOS</span><b id="score">0</b></div>
-   <div class="card stat"><span class="small">PEDRAS</span><b id="kills">0</b></div>
-   <div class="card stat"><span class="small">DANO</span><b id="dmg">8</b></div>
-   <div class="card stat"><span class="small">VIDA</span><b id="life">100</b></div>
+
+<section id="menu" class="screen">
+  <div class="menuBox">
+    <div class="logo">RNG<br>PEDRAS</div>
+    <div class="sub">Role seu apelido e depois entre na batalha.</div>
+    <div id="menuResult" class="result"><small>Seu apelido atual</small><br><b>Nicolas</b></div>
+    <div class="buttons">
+      <button class="btn roll" id="menuRoll">🎲 ROLAR RNG</button>
+      <button class="btn play" id="playBtn">▶ JOGAR</button>
+    </div>
   </div>
- </div>
- <div id="rollBox">
-  <div id="rarity">COMUM</div><div id="name">Nicolas</div>
-  <button id="roll">🎲 ROLAR RNG</button>
- </div>
- <div id="help">Clique/tap nas pedras para atirar • Derrote uma pedra = +100 pontos • Rolar troca seu poder</div>
-</div>
+</section>
+
+<section id="rngPanel" class="screen">
+  <div class="rngCard">
+    <div class="rngTitle">SORTEANDO APELIDO...</div>
+    <div id="rollingName" class="rollingName">Nicolas</div>
+    <div id="rollingRarity" class="rollingRarity">COMUM</div>
+    <div class="bar"><i id="bar"></i></div>
+    <div class="buttons"><button class="btn roll" id="again">🎲 ROLAR NOVAMENTE</button></div>
+  </div>
+</section>
+
+<section id="game">
+  <canvas id="canvas"></canvas>
+  <div class="hud">
+    <div class="hudBox"><span class="tiny">Apelido</span><b id="hudName">Nicolas</b><div id="hudRarity">COMUM</div></div>
+    <div class="hudBox"><span class="tiny">Pontos</span><b id="score">0</b></div>
+    <div class="hudBox"><span class="tiny">Vida</span><b id="hp">100</b></div>
+    <div class="hudBox"><span class="tiny">Dano</span><b id="damage">8</b></div>
+  </div>
+  <button id="back">← Menu</button>
+  <div id="power"><div id="powerName">Nicolas • COMUM</div><div class="hint">Toque nas pedras para atirar • pedra derrotada = +100</div></div>
+</section>
+<div id="flash" class="flash"></div>
+
 <script>
-const c=document.getElementById('game'),ctx=c.getContext('2d'),flash=document.getElementById('flash');
-let W,H,score=0,kills=0,shots=[],rocks=[],particles=[],last=0,spawn=0,shake=0;
-const rarities=[
- {key:'comum',label:'COMUM',chance:50,color:'#fff',names:['Nicolas','Henrico','Thales','Pedro'],damage:8,life:100,rate:1},
- {key:'raro',label:'RARO',chance:25,color:'#35a7ff',names:['Wlissys','Jaque','Bruno','Bagre'],damage:14,life:130,rate:1.1},
- {key:'epico',label:'ÉPICO',chance:15,color:'#b45cff',names:['Jadrian','Felipin','Kenedy','Vini'],damage:22,life:165,rate:1.2},
- {key:'lendario',label:'LENDÁRIO',chance:5,color:'#ff9b21',names:['Leo','Lipão','Jão'],damage:34,life:210,rate:1.35},
- {key:'mitico',label:'MÍTICO',chance:1,color:'#ff263c',names:['RL','FEFA'],damage:55,life:270,rate:1.55},
- {key:'secreto',label:'SECRETO',chance:.5,color:'rgb',names:['POLO'],damage:90,life:360,rate:1.8}
+const R=[
+ {k:'comum',n:'COMUM',c:'#ffffff',p:50,d:8,h:100,names:['Nicolas','Henrico','Thales','Pedro']},
+ {k:'raro',n:'RARO',c:'#39a7ff',p:25,d:14,h:130,names:['Wlissys','Jaque','Bruno','Bagre']},
+ {k:'epico',n:'ÉPICO',c:'#b85cff',p:15,d:22,h:165,names:['Jadrian','Felipin','Kenedy','Vini']},
+ {k:'lendario',n:'LENDÁRIO',c:'#ff9b20',p:5,d:34,h:210,names:['Leo','Lipão','Jão']},
+ {k:'mitico',n:'MÍTICO',c:'#ff263c',p:1,d:55,h:270,names:['RL','FEFA']},
+ {k:'secreto',n:'SECRETO',c:'rgb',p:.5,d:90,h:360,names:['POLO']}
 ];
-let current=rarities[0], player={x:W/2,y:H-90};
-function resize(){W=c.width=innerWidth*devicePixelRatio;H=c.height=innerHeight*devicePixelRatio;c.style.width=innerWidth+'px';c.style.height=innerHeight+'px';player.x=W/2;player.y=H-100*devicePixelRatio}
-addEventListener('resize',resize);resize();
-function weighted(){let r=Math.random()*96.5, sum=0;for(const x of rarities){sum+=x.chance;if(r<sum)return x}return rarities[0]}
-function roll(){
- current=weighted(); const n=current.names[Math.floor(Math.random()*current.names.length)];
- document.getElementById('name').textContent=n;document.getElementById('rarity').textContent=current.label;
- document.getElementById('current').textContent=n+' — '+current.label;
- document.getElementById('name').style.color=current.color==='rgb'?'#fff':current.color;
- document.getElementById('dmg').textContent=current.damage;document.getElementById('life').textContent=current.life;
- if(current.key==='mitico'||current.key==='secreto') epicEffect(current.key);
+let current=R[0], currentName='Nicolas', rolling=false;
+const menu=document.getElementById('menu'), panel=document.getElementById('rngPanel');
+const rn=document.getElementById('rollingName'), rr=document.getElementById('rollingRarity'), bar=document.getElementById('bar');
+
+function pick(){
+ let x=Math.random()*96.5,s=0;
+ for(const r of R){s+=r.p;if(x<s)return r}
+ return R[0];
 }
-document.getElementById('roll').onclick=roll;
-function epicEffect(k){
- flash.style.background=k==='secreto'?'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet)':'#ff173d';
- flash.animate([{opacity:.8},{opacity:0}],{duration:700,easing:'ease-out'});
- document.body.classList.remove('shake');void document.body.offsetWidth;document.body.classList.add('shake');
- for(let i=0;i<90;i++)particles.push({x:W/2,y:H/2,vx:(Math.random()-.5)*14,vy:(Math.random()-.5)*14,life:70,r:2+Math.random()*5,rgb:k==='secreto'});
+function colorFor(r){return r.c==='rgb'?`hsl(${Date.now()/4%360} 100% 60%)`:r.c}
+function showResult(r,name){
+ current=r;currentName=name;
+ document.getElementById('menuResult').innerHTML=`<small>Seu apelido atual</small><br><b style="color:${r.c==='rgb'?'#fff':r.c}">${name}</b><br><small>${r.n}</small>`;
+ document.getElementById('hudName').textContent=name;
+ document.getElementById('hudName').style.color=r.c==='rgb'?'#fff':r.c;
+ document.getElementById('hudRarity').textContent=r.n;
+ document.getElementById('hudRarity').style.color=r.c==='rgb'?'#fff':r.c;
+ document.getElementById('damage').textContent=r.d;
+ document.getElementById('hp').textContent=r.h;
+ document.getElementById('powerName').textContent=name+' • '+r.n;
 }
-function shoot(tx,ty){
- const dx=tx-player.x,dy=ty-player.y,len=Math.hypot(dx,dy)||1;
- shots.push({x:player.x,y:player.y,vx:dx/len*18,vy:dy/len*18,life:80,d:current.damage});
+function special(r){
+ if(r.k!=='mitico'&&r.k!=='secreto')return;
+ const f=document.getElementById('flash'); f.style.background=r.k==='secreto'?'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet)':'#ff173d';
+ f.animate([{opacity:.8},{opacity:0}],{duration:700});
 }
-c.addEventListener('pointerdown',e=>{shoot(e.clientX*devicePixelRatio,e.clientY*devicePixelRatio)});
-function spawnRock(){
- const r=28+Math.random()*28, hp=Math.round(35+score/900*10+r*1.4);
- rocks.push({x:r+Math.random()*(W-2*r),y:-r,r,hp,max:hp,vy:1.2+Math.random()*1.8});
-}
-function textParticle(x,y,t,col){particles.push({x,y,vx:(Math.random()-.5)*1,vy:-1.5,life:45,r:0,t,col})}
-function update(){
- spawn-=1;if(spawn<=0){spawnRock();spawn=35+Math.random()*35/current.rate}
- for(const s of shots){s.x+=s.vx;s.y+=s.vy;s.life--}
- shots=shots.filter(s=>s.life>0&&s.x>-50&&s.x<W+50&&s.y>-50&&s.y<H+50);
- for(const r of rocks){r.y+=r.vy}
- for(const s of shots){
-  for(const r of rocks){if(Math.hypot(s.x-r.x,s.y-r.y)<r.r+7&&r.hp>0){r.hp-=s.d;s.life=0;textParticle(r.x,r.y,'-'+s.d,'#fff');break}}
+function startRoll(){
+ if(rolling)return; rolling=true; panel.style.display='flex';
+ const duration=2300, start=performance.now();
+ function frame(t){
+   const q=Math.min(1,(t-start)/duration);
+   const r=pick(), name=r.names[Math.floor(Math.random()*r.names.length)];
+   rn.textContent=name; rn.style.color=r.c==='rgb'?`hsl(${t/3%360} 100% 65%)`:r.c;
+   rr.textContent=r.n; rr.style.color=rn.style.color;
+   bar.style.width=(q*100)+'%';
+   if(q<1){requestAnimationFrame(frame)}
+   else{
+     const finalR=pick(), finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
+     rn.textContent=finalName;rn.style.color=finalR.c==='rgb'?'#fff':finalR.c;
+     rr.textContent=finalR.n;rr.style.color=rn.style.color;
+     showResult(finalR,finalName);special(finalR);rolling=false;
+   }
  }
- for(const r of rocks){if(r.hp<=0&&!r.dead){r.dead=true;kills++;score+=100;for(let i=0;i<18;i++)particles.push({x:r.x,y:r.y,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7,life:35,r:3,rgb:false})}}
- rocks=rocks.filter(r=>!r.dead&&r.y<H+80);
- for(const p of particles){p.x+=p.vx;p.y+=p.vy;p.vy+=.02;p.life--}
- particles=particles.filter(p=>p.life>0);
- document.getElementById('score').textContent=score;document.getElementById('kills').textContent=kills;
+ requestAnimationFrame(frame);
+}
+document.getElementById('menuRoll').onclick=startRoll;
+document.getElementById('again').onclick=startRoll;
+
+document.getElementById('playBtn').onclick=()=>{menu.style.display='none';panel.style.display='none';document.getElementById('game').style.display='block';document.getElementById('back').style.display='block';resetGame()};
+document.getElementById('back').onclick=()=>{document.getElementById('game').style.display='none';document.getElementById('back').style.display='none';menu.style.display='flex'};
+
+const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
+let W=0,H=0,rocks=[],shots=[],parts=[],score=0,life=100,spawn=0,player={x:0,y:0};
+function resize(){W=canvas.width=innerWidth*devicePixelRatio;H=canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';player.x=W/2;player.y=H-100*devicePixelRatio}
+addEventListener('resize',resize);resize();
+function resetGame(){score=0;life=current.h;rocks=[];shots=[];parts=[];spawn=0;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('score').textContent=0;document.getElementById('hp').textContent=life}
+function shoot(x,y){const dx=x-player.x,dy=y-player.y,l=Math.hypot(dx,dy)||1;shots.push({x:player.x,y:player.y,vx:dx/l*18,vy:dy/l*18,life:70,d:current.d})}
+canvas.addEventListener('pointerdown',e=>shoot(e.clientX*devicePixelRatio,e.clientY*devicePixelRatio));
+function spawnRock(){let r=25+Math.random()*28,h=35+r*1.3+score/1000*10;rocks.push({x:r+Math.random()*(W-r*2),y:-r,r,h,max:h,v:1+Math.random()*1.5})}
+function update(){
+ spawn--;if(spawn<=0){spawnRock();spawn=38+Math.random()*38}
+ for(const s of shots){s.x+=s.vx;s.y+=s.vy;s.life--}
+ for(const r of rocks)r.y+=r.v;
+ for(const s of shots)for(const r of rocks)if(!s.hit&&Math.hypot(s.x-r.x,s.y-r.y)<r.r+7){s.hit=true;r.h-=s.d;parts.push({x:r.x,y:r.y,t:'-'+s.d,life:35,vx:0,vy:-1});break}
+ shots=shots.filter(s=>s.life>0&&!s.hit);
+ for(const r of rocks)if(r.h<=0&&!r.dead){r.dead=true;score+=100;for(let i=0;i<15;i++)parts.push({x:r.x,y:r.y,t:'',life:30,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7})}
+ for(const r of rocks)if(!r.dead&&r.y-r.r>H){r.dead=true;life=Math.max(0,life-10);document.getElementById('hp').textContent=life}
+ rocks=rocks.filter(r=>!r.dead);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.life--}parts=parts.filter(p=>p.life>0);
+ document.getElementById('score').textContent=score;
 }
 function draw(){
- ctx.clearRect(0,0,W,H);
- const grd=ctx.createRadialGradient(W/2,H*.6,20,W/2,H*.6,Math.max(W,H)*.7);grd.addColorStop(0,'#10233a');grd.addColorStop(1,'#050b14');ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
- ctx.strokeStyle='#17304a';ctx.globalAlpha=.35;for(let x=0;x<W;x+=60) {ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}for(let y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}ctx.globalAlpha=1;
- for(const r of rocks){ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,Math.PI*2);ctx.fillStyle='#6d7480';ctx.fill();ctx.strokeStyle='#aab2bc';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#222b36';ctx.font='bold 12px Arial';ctx.textAlign='center';ctx.fillText(Math.max(0,Math.ceil(r.hp))+'/'+r.max,r.x,r.y+4);ctx.fillStyle='#e94b4b';ctx.fillRect(r.x-r.r,r.y-r.r-10,r.r*2,4);ctx.fillStyle='#48e06a';ctx.fillRect(r.x-r.r,r.y-r.r-10,(r.r*2)*Math.max(0,r.hp/r.max),4)}
- for(const s of shots){ctx.beginPath();ctx.arc(s.x,s.y,6,0,Math.PI*2);ctx.fillStyle=current.color==='rgb'?'hsl('+(Date.now()/3%360)+',100%,60%)':current.color;ctx.shadowBlur=15;ctx.shadowColor=ctx.fillStyle;ctx.fill();ctx.shadowBlur=0}
- ctx.beginPath();ctx.arc(player.x,player.y,25,0,Math.PI*2);ctx.fillStyle='#dbe8f5';ctx.fill();ctx.fillStyle='#162536';ctx.fillRect(player.x-7,player.y-30,14,28);
- for(const p of particles){ctx.globalAlpha=Math.max(0,p.life/45);ctx.fillStyle=p.rgb?'hsl('+(Date.now()/2+p.x)%360+',100%,60%)':(p.col||'#fff');if(p.t){ctx.font='bold 14px Arial';ctx.fillText(p.t,p.x,p.y)}else{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1}
+ ctx.fillStyle='#050914';ctx.fillRect(0,0,W,H);
+ const g=ctx.createRadialGradient(W/2,H*.6,10,W/2,H*.6,Math.max(W,H)*.7);g.addColorStop(0,'#142b46');g.addColorStop(1,'#050914');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ for(let x=0;x<W;x+=70){ctx.strokeStyle='#17324c55';ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+ for(const r of rocks){ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,7);ctx.fillStyle='#68727e';ctx.fill();ctx.strokeStyle='#b6bec8';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#e14b4b';ctx.fillRect(r.x-r.r,r.y-r.r-10,r.r*2,5);ctx.fillStyle='#49e26d';ctx.fillRect(r.x-r.r,r.y-r.r-10,r.r*2*Math.max(0,r.h/r.max),5);ctx.fillStyle='#fff';ctx.font='bold 12px Arial';ctx.textAlign='center';ctx.fillText(Math.max(0,Math.ceil(r.h)),r.x,r.y+4)}
+ for(const s of shots){ctx.beginPath();ctx.arc(s.x,s.y,6,0,7);ctx.fillStyle=current.c==='rgb'?`hsl(${Date.now()/3%360} 100% 60%)`:current.c;ctx.shadowBlur=18;ctx.shadowColor=ctx.fillStyle;ctx.fill();ctx.shadowBlur=0}
+ ctx.beginPath();ctx.arc(player.x,player.y,25,0,7);ctx.fillStyle='#e5eef7';ctx.fill();ctx.fillStyle='#142235';ctx.fillRect(player.x-7,player.y-33,14,28);
+ for(const p of parts){ctx.globalAlpha=p.life/35;if(p.t){ctx.fillStyle='#fff';ctx.font='bold 15px Arial';ctx.fillText(p.t,p.x,p.y)}else{ctx.fillStyle='#c8d0da';ctx.beginPath();ctx.arc(p.x,p.y,3,0,7);ctx.fill()}ctx.globalAlpha=1}
  requestAnimationFrame(loop)
 }
-function loop(t){update();draw();last=t}
-roll();loop(0);
+function loop(){update();draw()}
+loop();
 </script>
-</body></html>
+</body>
+</html>
