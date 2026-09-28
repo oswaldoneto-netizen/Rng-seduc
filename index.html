@@ -87,7 +87,7 @@ function pick(){
 }
 function colorFor(r){return r.c==='rgb'?`hsl(${Date.now()/4%360} 100% 60%)`:r.c}
 function showResult(r,name){
- current=r;currentName=name;
+ current=r;currentName=name;hasCharacter=true;
  const n=document.getElementById('resultName'), rr=document.getElementById('resultRarity');
  n.textContent=name; rr.textContent=r.n;
  n.classList.toggle('rainbowText',r.k==='secreto'); rr.classList.toggle('rainbowText',r.k==='secreto');
@@ -185,7 +185,7 @@ let W=0,H=0,rocks=[],shots=[],parts=[],score=0,life=100,spawn=0,player={x:0,y:0}
 function resize(){W=canvas.width=innerWidth*devicePixelRatio;H=canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';player.x=W/2;player.y=H-100*devicePixelRatio}
 addEventListener('resize',resize);resize();
 function shotCountFor(r){const map={comum:1,raro:2,epico:3,lendario:4,mitico:5,secreto:6};return map[r.k]||1}
-function resetGame(){score=0;life=current.h;rocks=[];shots=[];parts=[];spawn=0;gameOver=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('score').textContent=0;document.getElementById('hp').textContent=life;document.getElementById('shotCount').textContent=shotCountFor(current);document.getElementById('gameOver').style.display='none';document.getElementById('powerName').textContent=currentName+' • '+current.n+' • '+shotCountFor(current)+' TIRO'+(shotCountFor(current)>1?'S':'')}
+function resetGame(){score=0;life=current?current.h:100;rocks=[];shots=[];parts=[];spawn=0;gameOver=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('score').textContent=0;document.getElementById('hp').textContent=life;document.getElementById('shotCount').textContent=shotCountFor(current);document.getElementById('gameOver').style.display='none';document.getElementById('powerName').textContent=currentName+' • '+current.n+' • '+shotCountFor(current)+' TIRO'+(shotCountFor(current)>1?'S':'')}
 function shoot(x,y){initAudio();shotSnd();
  if(gameOver)return;
  const dx=x-player.x,dy=y-player.y,base=Math.atan2(dy,dx),count=shotCountFor(current);

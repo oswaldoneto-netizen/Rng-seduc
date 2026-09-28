@@ -1,1 +1,2 @@
-RNG Pedras v9: rolagem rápida que desacelera até o resultado; sons e efeitos especiais para Mítico e Secreto.
+# RNG Pedras v10
+Primeira rolagem grátis e obrigatória. Depois, cada rolagem custa 100 pontos. O shooter só abre depois de obter um apelido.
