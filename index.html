@@ -30,6 +30,12 @@ canvas{width:100%;height:100%;display:block}
 #power{position:fixed;left:50%;bottom:15px;transform:translateX(-50%);background:#07101de8;border:1px solid #2a415b;border-radius:14px;padding:9px 14px;text-align:center;z-index:5;pointer-events:none}
 #powerName{font-weight:1000}.hint{font-size:11px;color:#9fb0c2}
 #back{position:fixed;top:72px;right:10px;z-index:8;display:none;border:0;border-radius:10px;padding:9px 12px;font-weight:900}
+.deviceTitle{margin-top:24px;font-size:12px;letter-spacing:2px;color:#8297ae;font-weight:900}
+.deviceButtons{display:flex;gap:10px;justify-content:center;margin-top:10px}
+.deviceBtn{border:1px solid #304863;background:#0b1728;color:#a9bbce;border-radius:12px;padding:12px 16px;font-weight:900;cursor:pointer}
+.deviceBtn.active{border-color:#4c8cff;background:#17305a;color:#fff;box-shadow:0 0 18px #2868ff55}
+#mobileFire{display:none;position:fixed;right:24px;bottom:80px;width:92px;height:92px;border-radius:50%;border:2px solid #ffffff66;background:#e84141dd;color:#fff;font-weight:1000;font-size:16px;z-index:7;box-shadow:0 8px 30px #0008}
+#mobileTip{display:none;position:fixed;left:50%;bottom:82px;transform:translateX(-50%);z-index:7;background:#07101de8;border:1px solid #304863;border-radius:12px;padding:8px 12px;font-size:11px;color:#b8c8d8}
 .flash{position:fixed;inset:0;pointer-events:none;z-index:10;opacity:0}
 </style>
 </head>
@@ -43,6 +49,11 @@ canvas{width:100%;height:100%;display:block}
     <div class="buttons">
       <button class="btn roll" id="menuRoll">🎲 ROLAR RNG</button>
       <button class="btn play" id="playBtn">▶ JOGAR</button>
+    </div>
+    <div class="deviceTitle">ESCOLHA COMO JOGAR</div>
+    <div class="deviceButtons">
+      <button class="deviceBtn active" id="pcMode">🖥️ COMPUTADOR</button>
+      <button class="deviceBtn" id="mobileMode">📱 CELULAR</button>
     </div>
   </div>
 </section>
@@ -66,7 +77,9 @@ canvas{width:100%;height:100%;display:block}
     <div class="hudBox"><span class="tiny">Dano</span><b id="damage">8</b></div>
   </div>
   <button id="back">← Menu</button>
-  <div id="power"><div id="powerName">Nicolas • COMUM</div><div class="hint">Toque nas pedras para atirar • pedra derrotada = +100</div></div>
+  <div id="power"><div id="powerName">Nicolas • COMUM</div><div class="hint" id="controlHint">Computador: clique na pedra para atirar • pedra derrotada = +100</div></div>
+  <button id="mobileFire">🔫<br>ATIRAR</button>
+  <div id="mobileTip">Arraste o dedo para mirar e aperte ATIRAR</div>
 </section>
 <div id="flash" class="flash"></div>
 
@@ -129,6 +142,23 @@ document.getElementById('again').onclick=startRoll;
 
 document.getElementById('playBtn').onclick=()=>{menu.style.display='none';panel.style.display='none';document.getElementById('game').style.display='block';document.getElementById('back').style.display='block';resetGame()};
 document.getElementById('back').onclick=()=>{document.getElementById('game').style.display='none';document.getElementById('back').style.display='none';menu.style.display='flex'};
+addEventListener('keydown',e=>{
+ if(deviceMode==='pc' && e.code==='Space'){e.preventDefault();shoot(aimX||W/2,aimY||H/2)}
+});
+
+
+let deviceMode='pc', aimX=0, aimY=0;
+const pcMode=document.getElementById('pcMode'), mobileMode=document.getElementById('mobileMode');
+function setDevice(mode){
+ deviceMode=mode;
+ pcMode.classList.toggle('active',mode==='pc'); mobileMode.classList.toggle('active',mode==='mobile');
+ document.getElementById('mobileFire').style.display=mode==='mobile'?'block':'none';
+ document.getElementById('mobileTip').style.display=mode==='mobile'?'block':'none';
+ document.getElementById('controlHint').textContent=mode==='mobile'
+  ? 'Celular: toque/arraste para mirar e use ATIRAR • pedra = +100'
+  : 'Computador: clique na pedra para atirar • pedra = +100';
+}
+pcMode.onclick=()=>setDevice('pc'); mobileMode.onclick=()=>setDevice('mobile');
 
 const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
 let W=0,H=0,rocks=[],shots=[],parts=[],score=0,life=100,spawn=0,player={x:0,y:0};
@@ -136,7 +166,14 @@ function resize(){W=canvas.width=innerWidth*devicePixelRatio;H=canvas.height=inn
 addEventListener('resize',resize);resize();
 function resetGame(){score=0;life=current.h;rocks=[];shots=[];parts=[];spawn=0;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('score').textContent=0;document.getElementById('hp').textContent=life}
 function shoot(x,y){const dx=x-player.x,dy=y-player.y,l=Math.hypot(dx,dy)||1;shots.push({x:player.x,y:player.y,vx:dx/l*18,vy:dy/l*18,life:70,d:current.d})}
-canvas.addEventListener('pointerdown',e=>shoot(e.clientX*devicePixelRatio,e.clientY*devicePixelRatio));
+canvas.addEventListener('pointermove',e=>{aimX=e.clientX*devicePixelRatio;aimY=e.clientY*devicePixelRatio});
+canvas.addEventListener('pointerdown',e=>{
+  aimX=e.clientX*devicePixelRatio; aimY=e.clientY*devicePixelRatio;
+  if(deviceMode==='pc') shoot(aimX,aimY);
+});
+document.getElementById('mobileFire').addEventListener('pointerdown',e=>{
+  e.preventDefault(); shoot(aimX||W/2,aimY||H/2);
+});
 function spawnRock(){let r=25+Math.random()*28,h=35+r*1.3+score/1000*10;rocks.push({x:r+Math.random()*(W-r*2),y:-r,r,h,max:h,v:1+Math.random()*1.5})}
 function update(){
  spawn--;if(spawn<=0){spawnRock();spawn=38+Math.random()*38}
