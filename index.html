@@ -5,55 +5,43 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>RNG Pedras</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif;background:#050914;color:white}
-body{touch-action:none}
-button{font:inherit}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Arial,Helvetica,sans-serif;background:#070b19;color:#fff}body{overflow:hidden;touch-action:none}button{font:inherit}
 .screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
-#menu{background:radial-gradient(circle at 50% 35%,#182c49 0,#091321 42%,#03060c 100%)}
-.menuBox{width:min(92vw,650px);padding:30px 22px;text-align:center;border:1px solid #304967;border-radius:24px;background:#08111fe8;box-shadow:0 20px 80px #000b}
-.logo{font-size:clamp(42px,12vw,82px);font-weight:1000;letter-spacing:4px;text-shadow:0 0 30px #42a5ff}
-.sub{color:#9db0c7;margin:8px 0 28px}
-.buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.btn{border:0;border-radius:14px;padding:15px 26px;font-weight:1000;font-size:18px;cursor:pointer;box-shadow:0 8px 25px #0008}
-.btn.roll{background:#fff;color:#08111f}.btn.play{background:#38df77;color:#04130a}.btn:active{transform:scale(.97)}
-#rngPanel{display:none;position:fixed;inset:0;background:radial-gradient(circle,#172944,#050912 70%);align-items:center;justify-content:center;z-index:20}
-.rngCard{width:min(92vw,700px);text-align:center;padding:28px;border-radius:24px;background:#091321eF;border:1px solid #365170;box-shadow:0 20px 90px #000}
-.rngTitle{font-size:15px;letter-spacing:4px;color:#8fa5bd}.rollingName{height:100px;display:flex;align-items:center;justify-content:center;font-size:clamp(42px,11vw,78px);font-weight:1000;text-shadow:0 0 28px currentColor}
-.rollingRarity{font-size:21px;font-weight:900;min-height:30px}.bar{height:7px;background:#172437;border-radius:10px;overflow:hidden;margin:24px 0}.bar i{display:block;height:100%;width:0;background:#fff}
-.result{min-height:52px}.result small{color:#91a4b8}.result b{font-size:30px}
-.hidden{display:none!important}
-#game{display:none;position:fixed;inset:0}
-canvas{width:100%;height:100%;display:block}
-.hud{position:fixed;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:8px;z-index:5;pointer-events:none}
-.hudBox{background:#07101ddd;border:1px solid #2a415b;border-radius:12px;padding:9px 12px;box-shadow:0 5px 20px #0007}
-.hudBox b{font-size:18px}.tiny{font-size:10px;color:#91a5ba;text-transform:uppercase;display:block}
-#power{position:fixed;left:50%;bottom:15px;transform:translateX(-50%);background:#07101de8;border:1px solid #2a415b;border-radius:14px;padding:9px 14px;text-align:center;z-index:5;pointer-events:none}
-#powerName{font-weight:1000}.hint{font-size:11px;color:#9fb0c2}
-#back{position:fixed;top:72px;right:10px;z-index:8;display:none;border:0;border-radius:10px;padding:9px 12px;font-weight:900}
-.deviceTitle{margin-top:24px;font-size:12px;letter-spacing:2px;color:#8297ae;font-weight:900}
-.deviceButtons{display:flex;gap:10px;justify-content:center;margin-top:10px}
-.deviceBtn{border:1px solid #304863;background:#0b1728;color:#a9bbce;border-radius:12px;padding:12px 16px;font-weight:900;cursor:pointer}
-.deviceBtn.active{border-color:#4c8cff;background:#17305a;color:#fff;box-shadow:0 0 18px #2868ff55}
-#mobileFire{display:none;position:fixed;right:24px;bottom:80px;width:92px;height:92px;border-radius:50%;border:2px solid #ffffff66;background:#e84141dd;color:#fff;font-weight:1000;font-size:16px;z-index:7;box-shadow:0 8px 30px #0008}
-#mobileTip{display:none;position:fixed;left:50%;bottom:82px;transform:translateX(-50%);z-index:7;background:#07101de8;border:1px solid #304863;border-radius:12px;padding:8px 12px;font-size:11px;color:#b8c8d8}
-.flash{position:fixed;inset:0;pointer-events:none;z-index:10;opacity:0}
+#menu{overflow:auto;align-items:flex-start;padding:34px 0 50px;background:radial-gradient(circle at 35% 18%,#311a5c 0,#15112e 35%,#071020 72%,#050811 100%)}
+.menuWrap{width:min(92vw,560px);margin:auto}
+.header{text-align:center;margin-bottom:20px}.header h1{font-size:clamp(32px,9vw,52px);margin:0;font-weight:1000;letter-spacing:-1px}.header p{margin:8px 0 0;color:#9eacc0;font-size:15px;line-height:1.4}
+.playerCard,.mainCard{border:1px solid #283650;background:#0b1225e8;border-radius:24px;box-shadow:0 18px 60px #0008}.playerCard{padding:16px 18px;margin-bottom:14px}.playerRow{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}.playerRow label{font-size:17px;font-weight:800}.playerInput{width:100%;background:#060b19;border:1px solid #32415c;color:#fff;border-radius:11px;padding:11px 13px;font-weight:700;font-size:16px}.stats{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:12px;margin-top:13px;align-items:center}.stat{font-size:16px;font-weight:900}.gold{color:#ffd22e}.blue{color:#42a9ff}.muted{color:#8e9bae;font-size:12px;font-weight:700}
+.mainCard{padding:14px 16px 18px}.resultBox{height:285px;border:1px solid #26334b;border-radius:20px;background:radial-gradient(circle at 50% 50%,#121b32,#060b18 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}.resultBox:after{content:"";position:absolute;top:0;bottom:0;width:3px;background:linear-gradient(transparent,#ffffff44,transparent);box-shadow:0 0 20px #ffffff55}.resultName{position:relative;z-index:1;font-size:clamp(42px,11vw,72px);font-weight:1000;text-shadow:0 0 25px currentColor}.resultRarity{position:relative;z-index:1;margin-top:8px;font-size:16px;font-weight:900;letter-spacing:2px}.resultTitle{text-align:center;margin:28px 0 18px}.resultTitle small{display:block;color:#66758d;font-size:12px;font-weight:1000;letter-spacing:4px}.resultTitle b{display:block;margin-top:6px;font-size:28px}
+.buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:15px;padding:17px 10px;font-weight:1000;font-size:17px;cursor:pointer;box-shadow:0 8px 24px #0008}.btn.roll{background:linear-gradient(90deg,#8b34f7,#286cff);color:#fff}.btn.play{background:linear-gradient(90deg,#a12d3a,#70202a);color:#b9aab0}.btn.play.enabled{color:#fff;cursor:pointer}.btn:active,.deviceBtn:active{transform:scale(.98)}
+.rarityGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.rarity{min-height:68px;border-radius:16px;background:#070d1e;border:1px solid #18243a;display:flex;flex-direction:column;justify-content:center;align-items:center}.rarity span{font-size:11px;color:#aab6c7}.rarity b{font-size:20px;margin-top:4px}.c-white b{color:#fff}.c-blue b{color:#4d9cff}.c-purple b{color:#b35cff}.c-orange b{color:#ff9130}.c-red b{color:#ff4050}.c-rgb b{background:linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bottomLinks{display:grid;grid-template-columns:1fr 1fr;margin-top:14px;color:#fff;font-weight:800;font-size:14px}.bottomLinks span{text-align:center}
+.deviceTitle{text-align:center;margin:15px 0 8px;color:#718099;font-size:10px;letter-spacing:2px;font-weight:1000}.deviceButtons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.deviceBtn{border:1px solid #293a55;background:#080f20;color:#9daec2;border-radius:13px;padding:12px;font-weight:1000;cursor:pointer}.deviceBtn.active{background:#132b55;border-color:#4b8cff;color:#fff;box-shadow:0 0 18px #2868ff44}
+#rngPanel{display:none;position:fixed;inset:0;background:radial-gradient(circle,#201642,#070a14 75%);align-items:center;justify-content:center;z-index:20;padding:20px}.rngCard{width:min(92vw,650px);text-align:center;padding:24px;border-radius:24px;background:#0b1225;border:1px solid #2c3c59;box-shadow:0 20px 90px #000}.rngTitle{font-size:13px;letter-spacing:4px;color:#8fa5bd}.rollingName{height:120px;display:flex;align-items:center;justify-content:center;font-size:clamp(42px,11vw,78px);font-weight:1000;text-shadow:0 0 28px currentColor}.rollingRarity{font-size:20px;font-weight:900;min-height:30px}.bar{height:7px;background:#172437;border-radius:10px;overflow:hidden;margin:22px 0}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b34f7,#2d78ff)}
+#game{display:none;position:fixed;inset:0;background:#050914}.gameTop{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;z-index:8}.gameHud{display:flex;gap:8px;flex-wrap:wrap}.hudBox{background:#07101ddd;border:1px solid #2a415b;border-radius:12px;padding:8px 11px;box-shadow:0 5px 20px #0007}.hudBox b{font-size:16px}.tiny{font-size:9px;color:#91a5ba;text-transform:uppercase;display:block}.exitBtn{border:1px solid #5b3140;background:#2a1018;color:#fff;border-radius:11px;padding:10px 14px;font-weight:1000;cursor:pointer}.exitBtn:active{transform:scale(.97)}
+canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:#07101de8;border:1px solid #2a415b;border-radius:14px;padding:9px 14px;text-align:center;z-index:5;pointer-events:none}.hintPanel b{font-weight:1000}.hint{font-size:11px;color:#9fb0c2}#mobileFire{display:none;position:fixed;right:24px;bottom:78px;width:92px;height:92px;border-radius:50%;border:2px solid #ffffff66;background:#e84141dd;color:#fff;font-weight:1000;font-size:15px;z-index:7;box-shadow:0 8px 30px #0008}#mobileTip{display:none;position:fixed;left:50%;bottom:82px;transform:translateX(-50%);z-index:7;background:#07101de8;border:1px solid #304863;border-radius:12px;padding:8px 12px;font-size:11px;color:#b8c8d8}.flash{position:fixed;inset:0;pointer-events:none;z-index:10;opacity:0}
+@media(max-width:430px){.menuWrap{width:92vw}.header h1{font-size:38px}.playerCard{padding:14px}.stats{grid-template-columns:1.25fr 1fr 1fr;gap:7px}.stat{font-size:14px}.mainCard{padding:12px}.resultBox{height:270px}.buttons{grid-template-columns:1fr 1fr}.btn{font-size:15px;padding:15px 8px}.rarityGrid{grid-template-columns:repeat(3,1fr)}.rarity{min-height:62px}.bottomLinks{font-size:12px}}
+@media(max-width:340px){.buttons,.deviceButtons{grid-template-columns:1fr}.rarityGrid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
 
 <section id="menu" class="screen">
-  <div class="menuBox">
-    <div class="logo">RNG<br>PEDRAS</div>
-    <div class="sub">Role seu apelido e depois entre na batalha.</div>
-    <div id="menuResult" class="result"><small>Seu apelido atual</small><br><b>Nicolas</b></div>
-    <div class="buttons">
-      <button class="btn roll" id="menuRoll">🎲 ROLAR RNG</button>
-      <button class="btn play" id="playBtn">▶ JOGAR</button>
+  <div class="menuWrap">
+    <div class="header"><h1>🎲 RNG DE APELIDOS</h1><p>Gaste pontos para rolar novos apelidos e enfrente pedras espaciais!</p></div>
+    <div class="playerCard">
+      <div class="playerRow"><label>👤 Player:</label><input class="playerInput" id="playerName" value="Player1" maxlength="16"></div>
+      <div class="stats"><div class="stat gold">🪙 <span id="menuScore">100</span> Pontos</div><div class="stat blue">⭐ Nível <span id="menuLevel">1</span></div><div class="muted">XP: <span id="menuXp">0</span>/100</div></div>
     </div>
-    <div class="deviceTitle">ESCOLHA COMO JOGAR</div>
-    <div class="deviceButtons">
-      <button class="deviceBtn active" id="pcMode">🖥️ COMPUTADOR</button>
-      <button class="deviceBtn" id="mobileMode">📱 CELULAR</button>
+    <div class="mainCard">
+      <div class="resultBox"><div id="resultName" class="resultName">???</div><div id="resultRarity" class="resultRarity"></div></div>
+      <div class="resultTitle"><small>RESULTADO</small><b id="resultText">Pronto para rolar</b></div>
+      <div class="buttons"><button class="btn roll" id="menuRoll">🎲 ROLL (100 Pts)</button><button class="btn play" id="playBtn">🚀 JOGAR SHOOTER</button></div>
+      <div class="deviceTitle">ESCOLHA O CONTROLE</div>
+      <div class="deviceButtons"><button class="deviceBtn active" id="pcMode">🖥️ COMPUTADOR</button><button class="deviceBtn" id="mobileMode">📱 CELULAR</button></div>
+      <div class="rarityGrid">
+        <div class="rarity c-white"><span>Comum</span><b>50%</b></div><div class="rarity c-blue"><span>Raro</span><b>25%</b></div><div class="rarity c-purple"><span>Épico</span><b>15%</b></div><div class="rarity c-orange"><span>Lendário</span><b>5%</b></div><div class="rarity c-red"><span>Mítico</span><b>1%</b></div><div class="rarity c-rgb"><span>Secreto</span><b>0,5%</b></div>
+      </div>
+      <div class="bottomLinks"><span>📜 Histórico</span><span>🏆 Leaderboard Online</span></div>
     </div>
   </div>
 </section>
@@ -70,16 +58,9 @@ canvas{width:100%;height:100%;display:block}
 
 <section id="game">
   <canvas id="canvas"></canvas>
-  <div class="hud">
-    <div class="hudBox"><span class="tiny">Apelido</span><b id="hudName">Nicolas</b><div id="hudRarity">COMUM</div></div>
-    <div class="hudBox"><span class="tiny">Pontos</span><b id="score">0</b></div>
-    <div class="hudBox"><span class="tiny">Vida</span><b id="hp">100</b></div>
-    <div class="hudBox"><span class="tiny">Dano</span><b id="damage">8</b></div>
-  </div>
-  <button id="back">← Menu</button>
-  <div id="power"><div id="powerName">Nicolas • COMUM</div><div class="hint" id="controlHint">Computador: clique na pedra para atirar • pedra derrotada = +100</div></div>
-  <button id="mobileFire">🔫<br>ATIRAR</button>
-  <div id="mobileTip">Arraste o dedo para mirar e aperte ATIRAR</div>
+  <div class="gameTop"><div class="gameHud"><div class="hudBox"><span class="tiny">Apelido</span><b id="hudName">Nicolas</b><div id="hudRarity">COMUM</div></div><div class="hudBox"><span class="tiny">Pontos</span><b id="score">0</b></div><div class="hudBox"><span class="tiny">Vida</span><b id="hp">100</b></div><div class="hudBox"><span class="tiny">Dano</span><b id="damage">8</b></div></div><button id="back" class="exitBtn">✕ SAIR</button></div>
+  <div class="hintPanel"><b id="powerName">Nicolas • COMUM</b><div class="hint" id="controlHint">Computador: clique na pedra para atirar • pedra derrotada = +100</div></div>
+  <button id="mobileFire">🔫<br>ATIRAR</button><div id="mobileTip">Arraste o dedo para mirar e aperte ATIRAR</div>
 </section>
 <div id="flash" class="flash"></div>
 
@@ -92,7 +73,7 @@ const R=[
  {k:'mitico',n:'MÍTICO',c:'#ff263c',p:1,d:55,h:270,names:['RL','FEFA']},
  {k:'secreto',n:'SECRETO',c:'rgb',p:.5,d:90,h:360,names:['POLO']}
 ];
-let current=R[0], currentName='Nicolas', rolling=false;
+let current=R[0], currentName='Nicolas', rolling=false, coins=100;
 const menu=document.getElementById('menu'), panel=document.getElementById('rngPanel');
 const rn=document.getElementById('rollingName'), rr=document.getElementById('rollingRarity'), bar=document.getElementById('bar');
 
@@ -104,7 +85,7 @@ function pick(){
 function colorFor(r){return r.c==='rgb'?`hsl(${Date.now()/4%360} 100% 60%)`:r.c}
 function showResult(r,name){
  current=r;currentName=name;
- document.getElementById('menuResult').innerHTML=`<small>Seu apelido atual</small><br><b style="color:${r.c==='rgb'?'#fff':r.c}">${name}</b><br><small>${r.n}</small>`;
+ document.getElementById('resultName').textContent=name;document.getElementById('resultName').style.color=r.c==='rgb'?'#fff':r.c;document.getElementById('resultRarity').textContent=r.n;document.getElementById('resultRarity').style.color=r.c==='rgb'?'#fff':r.c;document.getElementById('resultText').textContent=name+' • '+r.n;
  document.getElementById('hudName').textContent=name;
  document.getElementById('hudName').style.color=r.c==='rgb'?'#fff':r.c;
  document.getElementById('hudRarity').textContent=r.n;
@@ -132,16 +113,17 @@ function startRoll(){
      const finalR=pick(), finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
      rn.textContent=finalName;rn.style.color=finalR.c==='rgb'?'#fff':finalR.c;
      rr.textContent=finalR.n;rr.style.color=rn.style.color;
-     showResult(finalR,finalName);special(finalR);rolling=false;
+     showResult(finalR,finalName);special(finalR);document.getElementById('playBtn').classList.add('enabled');rolling=false;
    }
  }
  requestAnimationFrame(frame);
 }
-document.getElementById('menuRoll').onclick=startRoll;
+document.getElementById('menuRoll').onclick=()=>{ if(coins>=100){coins-=100;document.getElementById('menuScore').textContent=coins;startRoll()} };
+document.getElementById('playerName').addEventListener('input',e=>{document.getElementById('hudName').textContent=e.target.value||'Player1'});
 document.getElementById('again').onclick=startRoll;
 
 document.getElementById('playBtn').onclick=()=>{menu.style.display='none';panel.style.display='none';document.getElementById('game').style.display='block';document.getElementById('back').style.display='block';resetGame()};
-document.getElementById('back').onclick=()=>{document.getElementById('game').style.display='none';document.getElementById('back').style.display='none';menu.style.display='flex'};
+document.getElementById('back').onclick=()=>{document.getElementById('game').style.display='none';document.getElementById('back').style.display='none';coins+=score;document.getElementById('menuScore').textContent=coins;menu.style.display='flex'};
 addEventListener('keydown',e=>{
  if(deviceMode==='pc' && e.code==='Space'){e.preventDefault();shoot(aimX||W/2,aimY||H/2)}
 });
