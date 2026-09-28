@@ -61,7 +61,7 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
 <section id="game">
   <canvas id="canvas"></canvas>
   <div class="gameTop"><div class="gameHud"><div class="hudBox"><span class="tiny">Apelido</span><b id="hudName">Nicolas</b><div id="hudRarity">COMUM</div></div><div class="hudBox"><span class="tiny">Pontos</span><b id="score">0</b></div><div class="hudBox"><span class="tiny">Vida</span><b id="hp">100</b></div><div class="hudBox"><span class="tiny">Dano</span><b id="damage">8</b></div><div class="hudBox"><span class="tiny">Tiros/clique</span><b id="shotCount">1</b></div></div><button id="back" class="exitBtn">✕ SAIR</button></div>
-  <div class="hintPanel"><b id="powerName">Nicolas • COMUM</b><div class="hint" id="controlHint">Computador: clique na pedra para atirar • pedra derrotada = +100</div></div>
+  <div class="hintPanel"><b id="powerName">Nicolas • COMUM</b></div>
   <button id="mobileFire">🔫<br>ATIRAR</button><div id="mobileTip">Arraste o dedo para mirar e aperte ATIRAR</div>
   <div id="gameOver"><div class="gameOverCard"><h2>💥 VOCÊ PERDEU!</h2><p>Suas vidas chegaram a <b>0</b>.</p><p>Pontuação da partida: <b id="finalScore">0</b></p><div class="overBtns"><button class="retry" id="retryBtn">🔄 JOGAR NOVAMENTE</button><button class="menuBtn" id="overMenuBtn">✕ SAIR</button></div></div></div>
 </section>
@@ -115,45 +115,31 @@ function setDisplay(r,name,rollingView=false){
  else {n.style.color=r.c;rr.style.color=r.c;}
 }
 function startRoll(){
- if(rolling)return;
- if(coins<100){
-   document.getElementById('resultText').textContent='Você precisa de 100 pontos para rolar!';
-   document.getElementById('resultText').style.color='#ff5364';
-   return;
- }
- coins-=100; document.getElementById('menuScore').textContent=coins;
- rolling=true;
- const rollBtn=document.getElementById('menuRoll'); rollBtn.disabled=true; rollBtn.style.opacity='.65';
- document.getElementById('resultText').textContent='Sorteando...'; document.getElementById('resultText').style.color='#fff';
- const finalR=pick(), finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
- // Escolhe uma sequência de nomes sem repetir o anterior, para a caixa nunca parecer travada.
- const all=[]; for(const r of R) for(const name of r.names) all.push({r,name});
- let lastKey='';
- const sequence=[];
- for(let i=0;i<42;i++){
-   let item, tries=0;
-   do { item=all[Math.floor(Math.random()*all.length)]; tries++; } while(item.name===lastKey && tries<20);
-   sequence.push(item); lastKey=item.name;
- }
- // O resultado final entra várias posições antes do fim e depois é segurado para dar sensação de desaceleração.
- sequence.push({r:finalR,name:finalName});
- const start=performance.now(), duration=3900;
- let index=0, lastTime=start;
+ if(rolling || score<100)return;
+ rolling=true; score-=100; document.getElementById('score').textContent=score; initAudio();
+ const duration=3000,start=performance.now(),names=R.flatMap(r=>r.names);
+ let last='', tick=0;
  function frame(t){
    const q=Math.min(1,(t-start)/duration);
-   const eased=Math.pow(q,2.45);
-   const target=Math.min(sequence.length-1,Math.floor(eased*sequence.length));
-   if(target>index){
-     index=target;
-     const item=sequence[index];
-     setDisplay(item.r,item.name,true);
+   const speed=Math.max(0.025,0.17*(1-q)**2+0.012);
+   if(t>=tick){
+     let name;
+     do{name=names[Math.floor(Math.random()*names.length)]}while(name===last&&names.length>1);
+     last=name; rn.textContent=name;
+     const rr0=R.find(r=>r.names.includes(name))||R[0];
+     rn.style.color=name==='POLO'?`hsl(${t/2%360} 100% 60%)`:rr0.c;
+     rr.textContent=rr0.n; rr.style.color=rn.style.color;
+     rollSnd(); tick=t+speed*1000;
    }
-   if(q<1){ requestAnimationFrame(frame); return; }
-   showResult(finalR,finalName); special(finalR);
-   rollBtn.disabled=false; rollBtn.style.opacity='1'; rolling=false;
+   bar.style.width=(q*100)+'%';
+   if(q<1) requestAnimationFrame(frame);
+   else{
+     const finalR=pick(),finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
+     rn.textContent=finalName;rn.style.color=finalR.c==='rgb'?`hsl(${Date.now()/2%360} 100% 60%)`:finalR.c;
+     rr.textContent=finalR.n;rr.style.color=rn.style.color;showResult(finalR,finalName);special(finalR);rolling=false;
+   }
  }
- // Mostra o primeiro nome imediatamente e garante pelo menos dezenas de trocas visíveis.
- const first=sequence[0]; setDisplay(first.r,first.name,true); requestAnimationFrame(frame);
+ requestAnimationFrame(frame);
 }
 document.getElementById('menuRoll').onclick=startRoll;
 
@@ -175,19 +161,26 @@ function setDevice(mode){
  pcMode.classList.toggle('active',mode==='pc'); mobileMode.classList.toggle('active',mode==='mobile');
  document.getElementById('mobileFire').style.display=mode==='mobile'?'block':'none';
  document.getElementById('mobileTip').style.display=mode==='mobile'?'block':'none';
- document.getElementById('controlHint').textContent=mode==='mobile'
+ if(document.getElementById('controlHint')) document.getElementById('controlHint').textContent=mode==='mobile'
   ? 'Celular: toque/arraste para mirar e use ATIRAR • cada pedra = +100'
   : 'Computador: clique na pedra para atirar • pedra = +100';
 }
 pcMode.onclick=()=>setDevice('pc'); mobileMode.onclick=()=>setDevice('mobile');
 
+let audioCtx=null;
+function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume()}
+function snd(f,d,t='sine',g=.025,slide=0){if(!audioCtx)return;let o=audioCtx.createOscillator(),a=audioCtx.createGain();o.type=t;o.frequency.setValueAtTime(f,audioCtx.currentTime);if(slide)o.frequency.linearRampToValueAtTime(f+slide,audioCtx.currentTime+d);a.gain.setValueAtTime(g,audioCtx.currentTime);a.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+d);o.connect(a);a.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d)}
+function rollSnd(){initAudio();snd(180,.045,'square',.018,90)}
+function shotSnd(){initAudio();snd(620,.055,'sawtooth',.018,-160)}
+function hitSnd(){initAudio();snd(110,.08,'triangle',.03,70)}
+function destroySnd(){initAudio();snd(360,.09,'square',.025,260)}
 const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
 let W=0,H=0,rocks=[],shots=[],parts=[],score=0,life=100,spawn=0,player={x:0,y:0},gameOver=false;
 function resize(){W=canvas.width=innerWidth*devicePixelRatio;H=canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';player.x=W/2;player.y=H-100*devicePixelRatio}
 addEventListener('resize',resize);resize();
 function shotCountFor(r){const map={comum:1,raro:2,epico:3,lendario:4,mitico:5,secreto:6};return map[r.k]||1}
 function resetGame(){score=0;life=current.h;rocks=[];shots=[];parts=[];spawn=0;gameOver=false;player.x=W/2;player.y=H-100*devicePixelRatio;document.getElementById('score').textContent=0;document.getElementById('hp').textContent=life;document.getElementById('shotCount').textContent=shotCountFor(current);document.getElementById('gameOver').style.display='none';document.getElementById('powerName').textContent=currentName+' • '+current.n+' • '+shotCountFor(current)+' TIRO'+(shotCountFor(current)>1?'S':'')}
-function shoot(x,y){
+function shoot(x,y){initAudio();shotSnd();
  if(gameOver)return;
  const dx=x-player.x,dy=y-player.y,base=Math.atan2(dy,dx),count=shotCountFor(current);
  const spread=count===1?0:(Math.min(.42,.10+count*.045));
@@ -211,9 +204,9 @@ function update(){
  spawn--;if(spawn<=0){spawnRock();spawn=38+Math.random()*38}
  for(const s of shots){s.x+=s.vx;s.y+=s.vy;s.life--}
  for(const r of rocks)r.y+=r.v;
- for(const s of shots)for(const r of rocks)if(!s.hit&&Math.hypot(s.x-r.x,s.y-r.y)<r.r+7){s.hit=true;r.h-=s.d;parts.push({x:r.x,y:r.y,t:'-'+s.d,life:35,vx:0,vy:-1});break}
+ for(const s of shots)for(const r of rocks)if(!s.hit&&Math.hypot(s.x-r.x,s.y-r.y)<r.r+7){s.hit=true;r.h-=s.d;hitSnd();parts.push({x:r.x,y:r.y,t:'-'+s.d,life:35,vx:0,vy:-1});break}
  shots=shots.filter(s=>s.life>0&&!s.hit);
- for(const r of rocks)if(r.h<=0&&!r.dead){r.dead=true;score+=100;coins+=100;document.getElementById('menuScore').textContent=coins;for(let i=0;i<15;i++)parts.push({x:r.x,y:r.y,t:'',life:30,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7})}
+ for(const r of rocks)if(r.h<=0&&!r.dead){r.dead=true;score+=100;destroySnd();coins+=100;document.getElementById('menuScore').textContent=coins;for(let i=0;i<15;i++)parts.push({x:r.x,y:r.y,t:'',life:30,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7})}
  for(const r of rocks)if(!r.dead&&r.y-r.r>H){r.dead=true;life=Math.max(0,life-10);document.getElementById('hp').textContent=life;if(life<=0){endGame();break}}
  rocks=rocks.filter(r=>!r.dead);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.life--}parts=parts.filter(p=>p.life>0);
  document.getElementById('score').textContent=score;
