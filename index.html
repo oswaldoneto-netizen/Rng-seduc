@@ -12,10 +12,10 @@
 .header{text-align:center;margin-bottom:20px}.header h1{font-size:clamp(32px,9vw,52px);margin:0;font-weight:1000;letter-spacing:-1px}.header p{margin:8px 0 0;color:#9eacc0;font-size:15px;line-height:1.4}
 .playerCard,.mainCard{border:1px solid #283650;background:#0b1225e8;border-radius:24px;box-shadow:0 18px 60px #0008}.playerCard{padding:16px 18px;margin-bottom:14px}.playerRow{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}.playerRow label{font-size:17px;font-weight:800}.playerInput{width:100%;background:#060b19;border:1px solid #32415c;color:#fff;border-radius:11px;padding:11px 13px;font-weight:700;font-size:16px}.stats{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:12px;margin-top:13px;align-items:center}.stat{font-size:16px;font-weight:900}.gold{color:#ffd22e}.blue{color:#42a9ff}.muted{color:#8e9bae;font-size:12px;font-weight:700}
 .mainCard{padding:14px 16px 18px}.resultBox{height:285px;border:1px solid #26334b;border-radius:20px;background:radial-gradient(circle at 50% 50%,#121b32,#060b18 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}.resultBox:after{content:"";position:absolute;top:0;bottom:0;width:3px;background:linear-gradient(transparent,#ffffff44,transparent);box-shadow:0 0 20px #ffffff55}.resultName{position:relative;z-index:1;font-size:clamp(42px,11vw,72px);font-weight:1000;text-shadow:0 0 25px currentColor}.resultRarity{position:relative;z-index:1;margin-top:8px;font-size:16px;font-weight:900;letter-spacing:2px}.resultTitle{text-align:center;margin:28px 0 18px}.resultTitle small{display:block;color:#66758d;font-size:12px;font-weight:1000;letter-spacing:4px}.resultTitle b{display:block;margin-top:6px;font-size:28px}
-.buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:15px;padding:17px 10px;font-weight:1000;font-size:17px;cursor:pointer;box-shadow:0 8px 24px #0008}.btn.roll{background:linear-gradient(90deg,#8b34f7,#286cff);color:#fff}.btn.play{background:linear-gradient(90deg,#a12d3a,#70202a);color:#b9aab0}.btn.play.enabled{color:#fff;cursor:pointer}.btn:active,.deviceBtn:active{transform:scale(.98)}
+.buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:15px;padding:17px 10px;font-weight:1000;font-size:17px;cursor:pointer;box-shadow:0 8px 24px #0008}.btn.roll{background:linear-gradient(90deg,#8b34f7,#286cff);color:#fff}.btn.play{background:linear-gradient(90deg,#a12d3a,#70202a);color:#b9aab0}.btn.play.enabled{color:#fff;cursor:pointer}.btn:disabled{cursor:not-allowed;filter:grayscale(.25)}.btn:active,.deviceBtn:active{transform:scale(.98)}
 .rarityGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.rarity{min-height:68px;border-radius:16px;background:#070d1e;border:1px solid #18243a;display:flex;flex-direction:column;justify-content:center;align-items:center}.rarity span{font-size:11px;color:#aab6c7}.rarity b{font-size:20px;margin-top:4px}.c-white b{color:#fff}.c-blue b{color:#4d9cff}.c-purple b{color:#b35cff}.c-orange b{color:#ff9130}.c-red b{color:#ff4050}.c-rgb b{background:linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet);-webkit-background-clip:text;background-clip:text;color:transparent}
 .bottomLinks{display:grid;grid-template-columns:1fr 1fr;margin-top:14px;color:#fff;font-weight:800;font-size:14px}.bottomLinks span{text-align:center}
-.deviceTitle{text-align:center;margin:15px 0 8px;color:#718099;font-size:10px;letter-spacing:2px;font-weight:1000}.deviceButtons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.deviceBtn{border:1px solid #293a55;background:#080f20;color:#9daec2;border-radius:13px;padding:12px;font-weight:1000;cursor:pointer}.deviceBtn.active{background:#132b55;border-color:#4b8cff;color:#fff;box-shadow:0 0 18px #2868ff44}
+.rollHelp{text-align:center;color:#718099;font-size:11px;margin:10px 0 2px}.rollHelp b{color:#ffd22e}.deviceTitle{text-align:center;margin:15px 0 8px;color:#718099;font-size:10px;letter-spacing:2px;font-weight:1000}.deviceButtons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.deviceBtn{border:1px solid #293a55;background:#080f20;color:#9daec2;border-radius:13px;padding:12px;font-weight:1000;cursor:pointer}.deviceBtn.active{background:#132b55;border-color:#4b8cff;color:#fff;box-shadow:0 0 18px #2868ff44}
 #rngPanel{display:none;position:fixed;inset:0;background:radial-gradient(circle,#201642,#070a14 75%);align-items:center;justify-content:center;z-index:20;padding:20px}.rngCard{width:min(92vw,650px);text-align:center;padding:24px;border-radius:24px;background:#0b1225;border:1px solid #2c3c59;box-shadow:0 20px 90px #000}.rngTitle{font-size:13px;letter-spacing:4px;color:#8fa5bd}.rollingName{height:120px;display:flex;align-items:center;justify-content:center;font-size:clamp(42px,11vw,78px);font-weight:1000;text-shadow:0 0 28px currentColor}.rollingRarity{font-size:20px;font-weight:900;min-height:30px}.bar{height:7px;background:#172437;border-radius:10px;overflow:hidden;margin:22px 0}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b34f7,#2d78ff)}
 #game{display:none;position:fixed;inset:0;background:#050914}.gameTop{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;z-index:8}.gameHud{display:flex;gap:8px;flex-wrap:wrap}.hudBox{background:#07101ddd;border:1px solid #2a415b;border-radius:12px;padding:8px 11px;box-shadow:0 5px 20px #0007}.hudBox b{font-size:16px}.tiny{font-size:9px;color:#91a5ba;text-transform:uppercase;display:block}.exitBtn{border:1px solid #5b3140;background:#2a1018;color:#fff;border-radius:11px;padding:10px 14px;font-weight:1000;cursor:pointer}.exitBtn:active{transform:scale(.97)}
 canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:#07101de8;border:1px solid #2a415b;border-radius:14px;padding:9px 14px;text-align:center;z-index:5;pointer-events:none}.hintPanel b{font-weight:1000}.hint{font-size:11px;color:#9fb0c2}#mobileFire{display:none;position:fixed;right:24px;bottom:78px;width:92px;height:92px;border-radius:50%;border:2px solid #ffffff66;background:#e84141dd;color:#fff;font-weight:1000;font-size:15px;z-index:7;box-shadow:0 8px 30px #0008}#mobileTip{display:none;position:fixed;left:50%;bottom:82px;transform:translateX(-50%);z-index:7;background:#07101de8;border:1px solid #304863;border-radius:12px;padding:8px 12px;font-size:11px;color:#b8c8d8}.flash{position:fixed;inset:0;pointer-events:none;z-index:10;opacity:0}
@@ -35,7 +35,7 @@ canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;b
     <div class="mainCard">
       <div class="resultBox"><div id="resultName" class="resultName">???</div><div id="resultRarity" class="resultRarity"></div></div>
       <div class="resultTitle"><small>RESULTADO</small><b id="resultText">Pronto para rolar</b></div>
-      <div class="buttons"><button class="btn roll" id="menuRoll">🎲 ROLL (100 Pts)</button><button class="btn play" id="playBtn">🚀 JOGAR SHOOTER</button></div>
+      <div class="buttons"><button class="btn roll" id="menuRoll">🎲 ROLL (100 Pts)</button><button class="btn play" id="playBtn">🚀 JOGAR SHOOTER</button></div><div class="rollHelp">Cada roll custa <b>100 pontos</b>. Derrote pedras no shooter para ganhar pontos.</div>
       <div class="deviceTitle">ESCOLHA O CONTROLE</div>
       <div class="deviceButtons"><button class="deviceBtn active" id="pcMode">🖥️ COMPUTADOR</button><button class="deviceBtn" id="mobileMode">📱 CELULAR</button></div>
       <div class="rarityGrid">
@@ -100,30 +100,45 @@ function special(r){
  f.animate([{opacity:.8},{opacity:0}],{duration:700});
 }
 function startRoll(){
- if(rolling)return; rolling=true; panel.style.display='flex';
- const duration=2300, start=performance.now();
+ if(rolling)return;
+ if(coins<100){
+   document.getElementById('resultText').textContent='Você precisa de 100 pontos para rolar!';
+   document.getElementById('resultText').style.color='#ff5364';
+   return;
+ }
+ coins-=100;
+ document.getElementById('menuScore').textContent=coins;
+ rolling=true;
+ const rollBtn=document.getElementById('menuRoll');
+ rollBtn.disabled=true; rollBtn.style.opacity='.65';
+ document.getElementById('resultText').textContent='Sorteando...';
+ document.getElementById('resultText').style.color='#fff';
+ const duration=2400,start=performance.now();
+ let lastTick=0;
  function frame(t){
    const q=Math.min(1,(t-start)/duration);
-   const r=pick(), name=r.names[Math.floor(Math.random()*r.names.length)];
-   rn.textContent=name; rn.style.color=r.c==='rgb'?`hsl(${t/3%360} 100% 65%)`:r.c;
-   rr.textContent=r.n; rr.style.color=rn.style.color;
-   bar.style.width=(q*100)+'%';
+   const ease=q<.72?q:(1-Math.pow((1-q)/.28,2))*1; // slows near end
+   const r=pick(),name=r.names[Math.floor(Math.random()*r.names.length)];
+   document.getElementById('resultName').textContent=name;
+   document.getElementById('resultName').style.color=r.c==='rgb'?`hsl(${t/3%360} 100% 65%)`:r.c;
+   document.getElementById('resultRarity').textContent=r.n;
+   document.getElementById('resultRarity').style.color=document.getElementById('resultName').style.color;
+   if(t-lastTick>70+q*150){lastTick=t}
    if(q<1){requestAnimationFrame(frame)}
    else{
-     const finalR=pick(), finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
-     rn.textContent=finalName;rn.style.color=finalR.c==='rgb'?'#fff':finalR.c;
-     rr.textContent=finalR.n;rr.style.color=rn.style.color;
-     showResult(finalR,finalName);special(finalR);document.getElementById('playBtn').classList.add('enabled');rolling=false;
+     const finalR=pick(),finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
+     showResult(finalR,finalName);special(finalR);
+     document.getElementById('resultText').textContent=finalName+' • '+finalR.n;
+     rollBtn.disabled=false;rollBtn.style.opacity='1';rolling=false;
    }
  }
  requestAnimationFrame(frame);
 }
-document.getElementById('menuRoll').onclick=()=>{ if(coins>=100){coins-=100;document.getElementById('menuScore').textContent=coins;startRoll()} };
 document.getElementById('playerName').addEventListener('input',e=>{document.getElementById('hudName').textContent=e.target.value||'Player1'});
 document.getElementById('again').onclick=startRoll;
 
-document.getElementById('playBtn').onclick=()=>{menu.style.display='none';panel.style.display='none';document.getElementById('game').style.display='block';document.getElementById('back').style.display='block';resetGame()};
-document.getElementById('back').onclick=()=>{document.getElementById('game').style.display='none';document.getElementById('back').style.display='none';coins+=score;document.getElementById('menuScore').textContent=coins;menu.style.display='flex'};
+document.getElementById('playBtn').onclick=()=>{menu.style.display='none';document.getElementById('game').style.display='block';document.getElementById('back').style.display='block';resetGame()};
+document.getElementById('back').onclick=()=>{document.getElementById('game').style.display='none';document.getElementById('back').style.display='none';menu.style.display='flex';document.getElementById('menuScore').textContent=coins};
 addEventListener('keydown',e=>{
  if(deviceMode==='pc' && e.code==='Space'){e.preventDefault();shoot(aimX||W/2,aimY||H/2)}
 });
@@ -163,7 +178,7 @@ function update(){
  for(const r of rocks)r.y+=r.v;
  for(const s of shots)for(const r of rocks)if(!s.hit&&Math.hypot(s.x-r.x,s.y-r.y)<r.r+7){s.hit=true;r.h-=s.d;parts.push({x:r.x,y:r.y,t:'-'+s.d,life:35,vx:0,vy:-1});break}
  shots=shots.filter(s=>s.life>0&&!s.hit);
- for(const r of rocks)if(r.h<=0&&!r.dead){r.dead=true;score+=100;for(let i=0;i<15;i++)parts.push({x:r.x,y:r.y,t:'',life:30,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7})}
+ for(const r of rocks)if(r.h<=0&&!r.dead){r.dead=true;score+=100;coins+=100;document.getElementById('menuScore').textContent=coins;for(let i=0;i<15;i++)parts.push({x:r.x,y:r.y,t:'',life:30,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7})}
  for(const r of rocks)if(!r.dead&&r.y-r.r>H){r.dead=true;life=Math.max(0,life-10);document.getElementById('hp').textContent=life}
  rocks=rocks.filter(r=>!r.dead);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.life--}parts=parts.filter(p=>p.life>0);
  document.getElementById('score').textContent=score;
