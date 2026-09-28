@@ -104,8 +104,16 @@ function showResult(r,name){
 }
 function special(r){
  if(r.k!=='mitico'&&r.k!=='secreto')return;
- const f=document.getElementById('flash'); f.style.background=r.k==='secreto'?'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet)':'#ff173d';
- f.animate([{opacity:.8},{opacity:0}],{duration:700});
+ initAudio();
+ const f=document.getElementById('flash');
+ f.style.background=r.k==='secreto'?'linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet)':'#ff173d';
+ f.animate([{opacity:0},{opacity:.9},{opacity:0}],{duration:1200});
+ if(r.k==='mitico'){
+  beep(220,.15,'sawtooth',.06,440); setTimeout(()=>beep(440,.18,'sine',.05,660),120); setTimeout(()=>beep(880,.25,'sine',.04,-120),260);
+ }else{
+  beep(330,.13,'square',.055,330); setTimeout(()=>beep(660,.13,'triangle',.05,660),100); setTimeout(()=>beep(990,.22,'sine',.045,-250),210);
+  for(let i=0;i<60;i++)parts.push({x:W/2,y:H*.35,t:'',life:50,vx:(Math.random()-.5)*13,vy:(Math.random()-.5)*13});
+ }
 }
 function setDisplay(r,name,rollingView=false){
  const n=document.getElementById('resultName'), rr=document.getElementById('resultRarity');
@@ -117,29 +125,27 @@ function setDisplay(r,name,rollingView=false){
 function startRoll(){
  if(rolling || score<100)return;
  rolling=true; score-=100; document.getElementById('score').textContent=score; initAudio();
- const duration=3000,start=performance.now(),names=R.flatMap(r=>r.names);
- let last='', tick=0;
- function frame(t){
-   const q=Math.min(1,(t-start)/duration);
-   const speed=Math.max(0.025,0.17*(1-q)**2+0.012);
-   if(t>=tick){
-     let name;
-     do{name=names[Math.floor(Math.random()*names.length)]}while(name===last&&names.length>1);
-     last=name; rn.textContent=name;
-     const rr0=R.find(r=>r.names.includes(name))||R[0];
-     rn.style.color=name==='POLO'?`hsl(${t/2%360} 100% 60%)`:rr0.c;
-     rr.textContent=rr0.n; rr.style.color=rn.style.color;
-     rollSnd(); tick=t+speed*1000;
-   }
-   bar.style.width=(q*100)+'%';
-   if(q<1) requestAnimationFrame(frame);
-   else{
-     const finalR=pick(),finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
-     rn.textContent=finalName;rn.style.color=finalR.c==='rgb'?`hsl(${Date.now()/2%360} 100% 60%)`:finalR.c;
-     rr.textContent=finalR.n;rr.style.color=rn.style.color;showResult(finalR,finalName);special(finalR);rolling=false;
-   }
+ const names=R.flatMap(r=>r.names), finalR=pick(), finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
+ let step=0,total=34;
+ function tick(){
+  if(step<total){
+   let name;
+   do{name=names[Math.floor(Math.random()*names.length)]}while(name===rn.textContent);
+   const rrNow=R.find(r=>r.names.includes(name))||R[0];
+   rn.textContent=name;
+   rn.style.color=rrNow.c==='rgb'?`hsl(${performance.now()/3%360} 100% 60%)`:rrNow.c;
+   rr.textContent=rrNow.n; rr.style.color=rn.style.color;
+   bar.style.width=((step+1)/total*100)+'%';
+   rollSound(); step++;
+   const p=step/total, delay=28+Math.pow(p,3)*430;
+   setTimeout(tick,delay); return;
+  }
+  rn.textContent=finalName;
+  rn.style.color=finalR.c==='rgb'?`hsl(${performance.now()/2%360} 100% 60%)`:finalR.c;
+  rr.textContent=finalR.n; rr.style.color=rn.style.color; bar.style.width='100%';
+  showResult(finalR,finalName); special(finalR); rolling=false;
  }
- requestAnimationFrame(frame);
+ tick();
 }
 document.getElementById('menuRoll').onclick=startRoll;
 

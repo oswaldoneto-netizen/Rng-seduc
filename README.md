@@ -1,3 +1,1 @@
-# RNG Pedras v8
-
-Roleta rápida no início e desacelerando até parar, sons de roleta/tiro/impacto/destruição e painel de instrução acima da nave removido.
+RNG Pedras v9: rolagem rápida que desacelera até o resultado; sons e efeitos especiais para Mítico e Secreto.
