@@ -17,7 +17,7 @@
 .rainbowText{background:linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet,red);background-size:400% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;animation:rainbow 1s linear infinite;text-shadow:none!important}
 .bottomLinks{display:grid;grid-template-columns:1fr 1fr;margin-top:14px;color:#fff;font-weight:800;font-size:14px}.bottomLinks span{text-align:center}
 .rollHelp{text-align:center;color:#718099;font-size:11px;margin:10px 0 2px}.rollHelp b{color:#ffd22e}.deviceTitle{text-align:center;margin:15px 0 8px;color:#718099;font-size:10px;letter-spacing:2px;font-weight:1000}.deviceButtons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.deviceBtn{border:1px solid #293a55;background:#080f20;color:#9daec2;border-radius:13px;padding:12px;font-weight:1000;cursor:pointer}.deviceBtn.active{background:#132b55;border-color:#4b8cff;color:#fff;box-shadow:0 0 18px #2868ff44}
-#rngPanel{display:none;position:fixed;inset:0;background:radial-gradient(circle,#201642,#070a14 75%);align-items:center;justify-content:center;z-index:20;padding:20px}.rngCard{width:min(92vw,650px);text-align:center;padding:24px;border-radius:24px;background:#0b1225;border:1px solid #2c3c59;box-shadow:0 20px 90px #000}.rngTitle{font-size:13px;letter-spacing:4px;color:#8fa5bd}.rollingName{height:120px;display:flex;align-items:center;justify-content:center;font-size:clamp(42px,11vw,78px);font-weight:1000;text-shadow:0 0 28px currentColor}.rollingRarity{font-size:20px;font-weight:900;min-height:30px}.bar{height:7px;background:#172437;border-radius:10px;overflow:hidden;margin:22px 0}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b34f7,#2d78ff)}
+#rngPanel{display:none !important;position:fixed;inset:0;background:radial-gradient(circle,#201642,#070a14 75%);align-items:center;justify-content:center;z-index:20;padding:20px}.rngCard{width:min(92vw,650px);text-align:center;padding:24px;border-radius:24px;background:#0b1225;border:1px solid #2c3c59;box-shadow:0 20px 90px #000}.rngTitle{font-size:13px;letter-spacing:4px;color:#8fa5bd}.rollingName{height:120px;display:flex;align-items:center;justify-content:center;font-size:clamp(42px,11vw,78px);font-weight:1000;text-shadow:0 0 28px currentColor}.rollingRarity{font-size:20px;font-weight:900;min-height:30px}.bar{height:7px;background:#172437;border-radius:10px;overflow:hidden;margin:22px 0}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b34f7,#2d78ff)}
 #game{display:none;position:fixed;inset:0;background:#050914}.gameTop{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;z-index:8}.gameHud{display:flex;gap:8px;flex-wrap:wrap}.hudBox{background:#07101ddd;border:1px solid #2a415b;border-radius:12px;padding:8px 11px;box-shadow:0 5px 20px #0007}.hudBox b{font-size:16px}.tiny{font-size:9px;color:#91a5ba;text-transform:uppercase;display:block}.exitBtn{border:1px solid #5b3140;background:#2a1018;color:#fff;border-radius:11px;padding:10px 14px;font-weight:1000;cursor:pointer}.exitBtn:active{transform:scale(.97)}
 canvas{width:100%;height:100%;display:block}.hintPanel{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:#07101de8;border:1px solid #2a415b;border-radius:14px;padding:9px 14px;text-align:center;z-index:5;pointer-events:none}.hintPanel b{font-weight:1000}.hint{font-size:11px;color:#9fb0c2}#mobileFire{display:none;position:fixed;right:24px;bottom:78px;width:92px;height:92px;border-radius:50%;border:2px solid #ffffff66;background:#e84141dd;color:#fff;font-weight:1000;font-size:15px;z-index:7;box-shadow:0 8px 30px #0008}#mobileTip{display:none;position:fixed;left:50%;bottom:82px;transform:translateX(-50%);z-index:7;background:#07101de8;border:1px solid #304863;border-radius:12px;padding:8px 12px;font-size:11px;color:#b8c8d8}.flash{position:fixed;inset:0;pointer-events:none;z-index:10;opacity:0}
 #gameOver{display:none;position:fixed;inset:0;z-index:30;align-items:center;justify-content:center;background:#030611cc;backdrop-filter:blur(6px);padding:20px}.gameOverCard{width:min(90vw,460px);text-align:center;background:#0b1225;border:1px solid #33445f;border-radius:24px;padding:28px;box-shadow:0 25px 90px #000}.gameOverCard h2{margin:0;font-size:40px;color:#ff4050}.gameOverCard p{color:#9eb0c5;margin:10px 0 20px}.gameOverCard b{color:#ffd22e}.overBtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}.overBtns button{border:0;border-radius:14px;padding:14px;font-weight:1000;cursor:pointer}.retry{background:linear-gradient(90deg,#8b34f7,#286cff);color:#fff}.menuBtn{background:#26354d;color:#fff}
@@ -76,7 +76,7 @@ const R=[
  {k:'mitico',n:'MÍTICO',c:'#ff263c',p:1,d:55,h:270,names:['RL','FEFA']},
  {k:'secreto',n:'SECRETO',c:'rgb',p:.5,d:90,h:360,names:['POLO']}
 ];
-let current=null, currentName='???', rolling=false, coins=100, hasCharacter=false;
+let current=null, currentName='???', rolling=false, coins=100, hasCharacter=false, rollTimer=null, rollToken=0;
 const menu=document.getElementById('menu'), panel=document.getElementById('rngPanel');
 const rn=document.getElementById('rollingName'), rr=document.getElementById('rollingRarity'), bar=document.getElementById('bar');
 
@@ -123,78 +123,111 @@ function setDisplay(r,name,rollingView=false){
  else {n.style.color=r.c;rr.style.color=r.c;}
 }
 function startRoll(){
- if(rolling)return;
- // First roll is free. Every roll after the first costs 100 points.
- if(hasCharacter && coins<100){
-   document.getElementById('resultText').textContent='Você precisa de 100 pontos para rolar novamente!';
-   return;
- }
- if(hasCharacter){
-   coins-=100;
-   document.getElementById('menuScore').textContent=coins;
- }
- rolling=true;
- initAudio();
- const resultName=document.getElementById('resultName');
- const resultRarity=document.getElementById('resultRarity');
- const resultText=document.getElementById('resultText');
- const finalR=pick();
- const finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
- const names=R.flatMap(r=>r.names);
- let step=0;
- const total=42;
- resultText.textContent='SORTEANDO...';
- resultName.textContent='???';
- resultRarity.textContent='';
- resultName.classList.remove('rainbowText');
- resultRarity.classList.remove('rainbowText');
+  if(rolling)return;
 
- function tick(){
-   if(step<total){
-     let name;
-     do { name=names[Math.floor(Math.random()*names.length)]; }
-     while(name===resultName.textContent && names.length>1);
-     const r=R.find(x=>x.names.includes(name))||R[0];
-     resultName.textContent=name;
-     resultRarity.textContent=r.n;
-     if(r.k==='secreto'){
-       resultName.classList.add('rainbowText');
-       resultRarity.classList.add('rainbowText');
-       resultName.style.color=''; resultRarity.style.color='';
-     }else{
-       resultName.classList.remove('rainbowText');
-       resultRarity.classList.remove('rainbowText');
-       resultName.style.color=r.c; resultRarity.style.color=r.c;
-     }
-     resultText.textContent='SORTEANDO...';
-     resultName.animate([{transform:'scale(1.02)'},{transform:'scale(1)'}],{duration:70,easing:'ease-out'});
-     rollSound();
-     step++;
-     // Fast at the beginning, increasingly slower at the end.
-     const p=step/total;
-     const delay=28+Math.pow(p,3.1)*520;
-     setTimeout(tick,delay);
-     return;
-   }
+  // The very first roll is FREE. Every roll after getting a character costs 100 points.
+  if(hasCharacter && coins<100){
+    document.getElementById('resultText').textContent='Você precisa de 100 pontos para rolar novamente!';
+    return;
+  }
+  if(hasCharacter){
+    coins-=100;
+    document.getElementById('menuScore').textContent=coins;
+  }
 
-   // Stop on the actual result that was selected at the beginning.
-   resultName.textContent=finalName;
-   resultRarity.textContent=finalR.n;
-   if(finalR.k==='secreto'){
-     resultName.classList.add('rainbowText');
-     resultRarity.classList.add('rainbowText');
-     resultName.style.color=''; resultRarity.style.color='';
-   }else{
-     resultName.classList.remove('rainbowText');
-     resultRarity.classList.remove('rainbowText');
-     resultName.style.color=finalR.c; resultRarity.style.color=finalR.c;
-   }
-   showResult(finalR,finalName);
-   resultText.textContent=finalName+' • '+finalR.n;
-   special(finalR);
-   rolling=false;
- }
- tick();
+  // Always keep the player on the main screen. The old separate RNG screen is not used.
+  menu.style.display='flex';
+  panel.style.display='none';
+
+  rolling=true;
+  const myToken=++rollToken;
+  if(rollTimer){clearTimeout(rollTimer);rollTimer=null;}
+  initAudio();
+
+  const resultName=document.getElementById('resultName');
+  const resultRarity=document.getElementById('resultRarity');
+  const resultText=document.getElementById('resultText');
+  const rollButton=document.getElementById('menuRoll');
+  const finalR=pick();
+  const finalName=finalR.names[Math.floor(Math.random()*finalR.names.length)];
+  const names=R.flatMap(r=>r.names);
+
+  let step=0;
+  const total=52;
+  let lastName='';
+  resultText.textContent='SORTEANDO...';
+  resultName.textContent='???';
+  resultRarity.textContent='';
+  resultName.classList.remove('rainbowText');
+  resultRarity.classList.remove('rainbowText');
+  rollButton.disabled=true;
+  rollButton.textContent='🎲 SORTEANDO...';
+
+  function displayRolling(name,r){
+    resultName.textContent=name;
+    resultRarity.textContent=r.n;
+    if(r.k==='secreto'){
+      resultName.classList.add('rainbowText');
+      resultRarity.classList.add('rainbowText');
+      resultName.style.color='';
+      resultRarity.style.color='';
+    }else{
+      resultName.classList.remove('rainbowText');
+      resultRarity.classList.remove('rainbowText');
+      resultName.style.color=r.c;
+      resultRarity.style.color=r.c;
+    }
+    resultName.animate(
+      [{transform:'scale(1.06)'},{transform:'scale(1)'}],
+      {duration:65,easing:'ease-out'}
+    );
+    rollSnd();
+  }
+
+  function finish(){
+    if(myToken!==rollToken)return;
+    if(rollTimer){clearTimeout(rollTimer);rollTimer=null;}
+    resultName.textContent=finalName;
+    resultRarity.textContent=finalR.n;
+    if(finalR.k==='secreto'){
+      resultName.classList.add('rainbowText');
+      resultRarity.classList.add('rainbowText');
+      resultName.style.color='';
+      resultRarity.style.color='';
+    }else{
+      resultName.classList.remove('rainbowText');
+      resultRarity.classList.remove('rainbowText');
+      resultName.style.color=finalR.c;
+      resultRarity.style.color=finalR.c;
+    }
+    showResult(finalR,finalName);
+    resultText.textContent=finalName+' • '+finalR.n;
+    special(finalR);
+    rolling=false;
+    rollButton.disabled=false;
+    rollButton.textContent=hasCharacter?'🎲 ROLAR (100 Pts)':'🎲 ROLAR';
+  }
+
+  function tick(){
+    if(myToken!==rollToken)return;
+    if(step>=total){finish();return;}
+
+    let name;
+    do{name=names[Math.floor(Math.random()*names.length)];}
+    while(name===lastName && names.length>1);
+    lastName=name;
+    const r=R.find(x=>x.names.includes(name))||R[0];
+    displayRolling(name,r);
+    step++;
+
+    // Starts VERY fast and progressively slows down before stopping.
+    const p=step/total;
+    const delay=30 + Math.pow(p,3.4)*430;
+    rollTimer=setTimeout(tick,delay);
+  }
+
+  // Start immediately so there is never a blank/frozen first frame.
+  tick();
 }
 document.getElementById('menuRoll').onclick=startRoll;
 document.getElementById('again').onclick=startRoll;
@@ -234,10 +267,10 @@ pcMode.onclick=()=>setDevice('pc'); mobileMode.onclick=()=>setDevice('mobile');
 let audioCtx=null;
 function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume()}
 function snd(f,d,t='sine',g=.025,slide=0){if(!audioCtx)return;let o=audioCtx.createOscillator(),a=audioCtx.createGain();o.type=t;o.frequency.setValueAtTime(f,audioCtx.currentTime);if(slide)o.frequency.linearRampToValueAtTime(f+slide,audioCtx.currentTime+d);a.gain.setValueAtTime(g,audioCtx.currentTime);a.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+d);o.connect(a);a.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d)}
-function rollSnd(){initAudio();snd(180,.045,'square',.018,90)}
-function shotSnd(){initAudio();snd(620,.055,'sawtooth',.018,-160)}
-function hitSnd(){initAudio();snd(110,.08,'triangle',.03,70)}
-function destroySnd(){initAudio();snd(360,.09,'square',.025,260)}
+function rollSnd(){initAudio();snd(220,.055,'square',.035,120)}
+function shotSnd(){initAudio();snd(620,.07,'sawtooth',.035,-180)}
+function hitSnd(){initAudio();snd(110,.09,'triangle',.045,90)}
+function destroySnd(){initAudio();snd(360,.11,'square',.04,300)}
 const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
 let W=0,H=0,rocks=[],shots=[],parts=[],score=0,life=100,spawn=0,player={x:0,y:0},gameOver=false;
 function resize(){W=canvas.width=innerWidth*devicePixelRatio;H=canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';player.x=W/2;player.y=H-100*devicePixelRatio}
@@ -283,7 +316,6 @@ function draw(){
  for(const s of shots){ctx.beginPath();ctx.arc(s.x,s.y,6,0,7);ctx.fillStyle=current.c==='rgb'?`hsl(${Date.now()/3%360} 100% 60%)`:current.c;ctx.shadowBlur=18;ctx.shadowColor=ctx.fillStyle;ctx.fill();ctx.shadowBlur=0}
  const shipColor=current.c==='rgb'?`hsl(${Date.now()/3%360} 100% 60%)`:current.c;
  ctx.save();ctx.translate(player.x,player.y);ctx.shadowBlur=22;ctx.shadowColor=shipColor;ctx.fillStyle=shipColor;ctx.beginPath();ctx.moveTo(0,-34);ctx.lineTo(27,25);ctx.lineTo(0,16);ctx.lineTo(-27,25);ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#07101d';ctx.beginPath();ctx.arc(0,3,7,0,7);ctx.fill();ctx.fillStyle='#dce8f4';ctx.fillRect(-4,8,8,15);ctx.restore();
- ctx.fillStyle=shipColor;ctx.font='bold 13px Arial';ctx.textAlign='center';ctx.fillText(currentName+' • '+current.n,player.x,player.y+48);
  for(const p of parts){ctx.globalAlpha=p.life/35;if(p.t){ctx.fillStyle='#fff';ctx.font='bold 15px Arial';ctx.fillText(p.t,p.x,p.y)}else{ctx.fillStyle='#c8d0da';ctx.beginPath();ctx.arc(p.x,p.y,3,0,7);ctx.fill()}ctx.globalAlpha=1}
  requestAnimationFrame(loop)
 }
